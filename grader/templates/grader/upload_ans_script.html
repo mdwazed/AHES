@@ -1,0 +1,25 @@
+{% extends 'grader_base_template.html' %}
+
+{% block title %}
+    Home | Upload Ans
+{% endblock %}
+
+{% block content %}
+    <div class="col-md-8">
+        <div>
+            <h4 class="para-heading"> Upload answer scripts </h4>          
+        </div>
+        <div>
+            {% if upload_file_count %}
+            <p>{{ upload_file_count }} files has been uploaded</p>
+            {% endif %}
+           
+        <form action="{% url 'grader:upload_ans_script' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="myfile" multiple>
+            <button type="submit">Upload</button>
+        </form>
+                 
+        </div>      
+    </div>
+{% endblock %}

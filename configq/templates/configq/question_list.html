@@ -1,0 +1,43 @@
+{% extends 'configq_base_template.html' %}
+{% block title %}
+	AHES | question list
+{% endblock %}
+
+
+{% block content %}
+
+	<h4 class="para-heading">Question list - {{ exam }}</h4>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Question Number</th><th>Page number</th><th>Question</th><th>Answer</th><th></th><th></th>			
+			</tr>
+		</thead>
+		<tbody>
+			{% for question in questions %}
+				<tr>
+					<td>{{ question.question_number }}</td>
+					<td>{{ question.page }}</td>
+					<td>{{ question.questionText }}</td>
+					<td>{{ question.questionAns }}</td>
+					<td>
+						<form action="{% url 'configq:edit_question' %}" method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="question_id" value="{{ question.id }}">
+							<input type="submit" name="submit" value="Edit">
+					
+						</form>
+					</td>
+					<td>
+						<form action="{% url 'configq:delete_question' %}" method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="question_id" value="{{ question.id }}">
+							<input type="submit" name="submit" value="Delete">
+					
+						</form>
+					</td>
+				</tr>			
+			{% endfor %}
+		</tbody>		
+	</table>	
+{% endblock %}

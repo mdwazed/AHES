@@ -1,0 +1,159 @@
+
+{% extends 'grader_base_template.html' %}
+{% load static %}
+{% block title %}
+    AHES | Detail Ans
+{% endblock %}
+
+{% block content %}
+    <div>
+        <div>
+            <h4 class="para-heading"> Answer Details </h4>          
+       
+         
+            <h6>Matriculation number: {{ student_ans.matriculation_num }},  Question number:  {{student_ans.question_num}}</h6>
+           
+            <hr>
+            <h5 class="para-heading">Question :</h5>            
+            <div>
+                <p>{{ question.questionText }}</p>
+            </div>
+            <hr>
+            <h5 class="para-heading">Official answer :</h5>
+            <div>
+                <p>{{ question.questionAns }}</p>
+            </div>
+            <hr>
+            <h5 class="para-heading">As written by the student :</h5>
+            <div class="sub-image">
+                {% if img %}
+                <img src="data:image/png;base64, {{img}}" alt="ans_image" width="100%" >
+                {% else %}
+                <img src="{% static 'img/sub_image_error.png' %}" alt="ans_image" width="100%" >
+                {% endif %}
+                
+            </div>
+            <hr>
+            <h5 class="para-heading">As read by the system :</h5>
+            <div>
+                <p>{{ student_ans.students_ans }}</p>
+            </div>
+            <hr>
+            <div style="display: flex;">
+                <div class="small-info-div">
+                    <p>Matching confidence<br>{{ student_ans.matching_confidence }}</p>         
+                </div>
+                <div class="small-info-div">
+                    <p>Alloted Marks<br>{{ student_ans.alloted_marks }}</p>         
+                </div>
+                <div class="small-info-div">
+                    <p>Threshold <button type="button" class="btn btn-link" id="btn-th-change">Change</button><br><span id="th-val">{{ question.threshold }}</span></p>
+                    <div class="edit-th">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="text" class="form-control-sm col-4" id="text-new-th">
+                            <input type="hidden" value="{{question.pk}}" id="question-id">
+                            <button class="btn btn-primary btn-sm" id="th-save">Save</button>
+                        </form>
+                    </div>
+                    
+                </div>
+                <div class="small-info-div">
+                    <p>Auto grade<br> {{ student_ans.auto_grade }}</p>
+                </div>
+                <div class="small-info-div">
+                    <p>Final grade<button type="button" class="btn btn-link" id="btn-fg-change">Change</button><br><span id="fg-val">{{ student_ans.final_grade }}</span></p>
+                    <div class="edit-fg">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="text" class="form-control-sm col-4" id="text-new-fg">
+                            <input type="hidden" value="{{student_ans.pk}}" id="student-ans-id">
+                            <button class="btn btn-primary btn-sm" id="fg-save">Save</button>
+                        </form>
+                    </div>
+                </div>                
+            </div>
+            <hr>
+            <div style="display: flex;">
+                <form action="{% url 'grader:ans_details' %}" method="POST" id="form-ans-details">
+                    {% csrf_token %}
+                    <div class="small-info-div">
+                        <label class="radio-inline"><input type="radio" name="next_choice" value="random">Random</label>
+                        <label class="radio-inline"><input type="radio" name="next_choice" value="student">This student</label>
+                        <label class="radio-inline"><input type="radio" name="next_choice" value="question" checked>This question</label>
+                    </div>
+                    <div class="small-info-div">
+                        <input type="hidden" name="pk" value="{{ student_ans.pk }}">
+                        <button type="submit" class="btn btn-primary">Next</button>
+                    </div>
+                    
+                </form>
+            </div>
+            <hr>
+        </div>      
+    </div>
+{% endblock %}
+
+{% block javascript%}
+<script>
+$(document).ready(function(){
+    // change threshold
+    $(".edit-th").hide();
+    $("#btn-th-change").click(function(){
+        console.log("change btn clicked");
+        $(".edit-th").toggle(500);
+    });
+    $("#th-save").click(function(){
+        event.preventDefault();
+        var question_id = $("#question-id").val();
+        var new_th = $("#text-new-th").val();
+        console.log(question_id);
+        // ajax call to views
+        $.post("/grader/change_threshold/", 
+            {
+                question_id : question_id,
+                new_th : new_th,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            function(data, status){
+                if(status == 'success'){
+                    $("#th-val").html(data.new_th);
+                    
+                }else{
+                    alert(data.error)
+                }
+                
+                // $("#form-ans-details").submit();
+            }
+            );
+    });
+
+    // change final grade
+    $(".edit-fg").hide();
+    $("#btn-fg-change").click(function(){
+        console.log("fg change btn clicked");
+        $(".edit-fg").toggle(500);
+    });
+    $("#fg-save").click(function(){
+        event.preventDefault();
+        var student_ans_id = $("#student-ans-id").val();
+        var new_fg = $("#text-new-fg").val();
+        console.log(student_ans_id);
+        // ajax call to views
+        $.post("/grader/change_final_grade/", 
+            {
+                student_ans_id : student_ans_id,
+                new_fg : new_fg,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            function(data, status){
+                $("#fg-val").html(data.fg) 
+            }
+            );
+    });
+});
+
+
+
+</script>
+{% endblock %}

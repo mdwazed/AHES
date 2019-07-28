@@ -1,0 +1,40 @@
+/*.question-image{
+	width:1244px;
+	height:1758px;
+	border:2px solid blue;
+	margin:5px;
+}*/
+
+.table {
+    /*background-color: red;*/
+}
+
+.sub-heading{
+	margin-top: 30px
+}
+
+.small-info-div {
+    margin: 5px 5px;
+}
+
+.search-box {
+    width: 100%;
+    /*border: 1px solid red;*/
+    display: inline-flex;
+    justify-content: flex-end;
+    /*flex-flow: row nowrap;*/
+}
+
+.search-box div {
+    align-self: flex-end;
+    margin: 10px 10px;
+    display: inline-flex;
+}
+
+.search-box .form-control {
+    display: inline;
+}
+.search-box input {
+    margin-left: 10px;
+}
+

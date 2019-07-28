@@ -1,0 +1,6 @@
+db.sqlite3
+media/
+*.pyo
+*.pyc
+google_cloud_credential.json
+ahes-google-credential.json

@@ -1,0 +1,80 @@
+{% extends 'configq_base_template.html' %}
+
+{% block title %}
+	AHES | Question upload
+{% endblock %}
+
+{% block content %}
+	<div>
+		<h4 class="para-heading"> Question image upload </h4>
+		{% if exam %}
+			<p>Uploading image for: {{  exam }}</p>
+		{% endif %}
+		{% if message %}
+			<p>{{  message }}</p>
+		{% endif %}
+		<form action="{% url 'configq:question_image_upload' %}" method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+			<table> {{ form.as_table }} </table>
+			<button name="image">Upload</button>
+			
+		</form>
+				
+	</div>
+	<div>
+		<h4 class="sub-heading">List of images already uploaded</h4>
+		<table class="table">
+		<thead>
+			<tr>
+				<th>Exam</th><th>Page number</th><th>Description</th><th></th><th></th><th></th></tr>			
+			</tr>
+		</thead>
+		<tbody>
+			{% for uploaded_image in uploaded_images %}
+				<tr>
+					<td>{{ uploaded_image.exam }}</td>
+					<td>{{ uploaded_image.page }}</td>
+					<td>{{ uploaded_image.description }}</td>
+					
+					<td>
+						<form action="{% url 'configq:show_question_image' %}" method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="uploaded_image_id" value="{{ uploaded_image.id }}">
+							<input type="submit" name="submit" value="Open">
+					
+						</form>
+					</td>
+					<td>
+						<form action="{% url 'configq:delete_question_image' %}" method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="uploaded_image_id" value="{{ uploaded_image.id }}">
+							<input type="submit" name="submit" value="Delete">
+					
+						</form>
+					</td>
+					<td>
+						<form action="{% url 'configq:page_config' %}" method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="page_number" value="{{ uploaded_image.page }}">
+							<input type="submit" name="submit" value="Config">
+					
+						</form>
+					</td>
+				</tr>			
+			{% endfor %}
+		</tbody>		
+	</table>
+		
+		<!-- {% for uploaded_image in uploaded_iamges %}
+			<li>Exam: {{ uploaded_image.exam }},  Page: {{ uploaded_image.page }} 
+				<a href="/media/{{ uploaded_image.image }}">Open</a> ||				
+				<button type="button" class="btn btn-link">Delete</button>
+			</li>				
+		{% endfor %} -->
+		
+	</div>
+	
+	
+
+
+{% endblock %}
